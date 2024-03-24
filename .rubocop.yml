@@ -1,6 +1,7 @@
 require:
   - rubocop-rake
   - rubocop-rspec
+  - rubocop-disable_syntax
 
 AllCops:
   TargetRubyVersion: 3.2
@@ -16,3 +17,12 @@ Style/StringLiteralsInInterpolation:
 
 Layout/LineLength:
   Max: 120
+
+# https://github.com/fatkodima/rubocop-disable_syntax
+Style/DisableSyntax:
+  DisableSyntax:
+    - unless
+    - and_or_not
+
+Style/NegatedIf:
+  Enabled: false
