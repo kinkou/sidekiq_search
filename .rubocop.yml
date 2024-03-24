@@ -18,6 +18,9 @@ Style/StringLiteralsInInterpolation:
 Layout/LineLength:
   Max: 120
 
+Metrics/MethodLength:
+  Max: 15
+
 # https://github.com/fatkodima/rubocop-disable_syntax
 Style/DisableSyntax:
   DisableSyntax:
