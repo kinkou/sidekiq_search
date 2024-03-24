@@ -6,6 +6,8 @@ gemspec
 
 gem 'awesome_print'
 gem 'irb'
+gem 'rack-session'
+gem 'rackup'
 gem 'rake', '>= 13'
 gem 'rspec', '>= 3'
 gem 'rubocop', '>= 1.6'
