@@ -1,33 +1,28 @@
 # sidekiq_search
 
-This gem provides a unified way to programmatically access Sidekiq jobs.
+This gem provides a uniform way to programmatically access Sidekiq jobs.
 
-Oftentimes there is a need to get a job from Sidekiq and do something with it. For example, in a Rails app to reschedule an already scheduled job. Sidekiq has an [API][1] for these things, but it's not that easy to use for the following reasons:
-- the inteface to work with enqueued/scheduled/retried/dead/running jobs differs
-- there can be changes from version to version
-- it's hard to recall for most of us mere mortals
+Often, there is a need to retrieve a job from Sidekiq and do something with it. For example, in a Rails app to reschedule an already scheduled job. Sidekiq has an [API][1] for these things, but it's not that easy to use for the following reasons:
+- enqueued, scheduled/retried/dead and running jobs all have slightly different interfaces
+- the API can change from version to version
+- the API details are a bit hard to recall for most of us mere mortals
 
 `sidekiq_search` is an answer to these problems.
 
 ### A word of caution
-How and what this gem does may, in certain circumstances, be suboptimal, but it _seems like_ there is no better way to do this in the OSS Sidekiq version. Partly, creating this gem was an attempt to find a better way. Later in this document I will explain the shortcomings of the approach that is taken, but please be warned that if your application works with a large number of jobs you might run into memory or/and performance issues.
+How and what this gem does may, in certain circumstances, be suboptimal, but it _seems like_ there is no better way to do this in the OSS version of Sidekiq. Later in this document I will explain the shortcomings of the approach that is taken, but please be warned that if your application has a lot of jobs you might run into memory or/and performance issues.
 
 ## Usage
 ```ruby
 # The gem has a single method, `.jobs`. It simply returns an array of hashes
 # where each hash contains job parameters.
 jobs = SidekiqSearch.jobs(
-  # Each parameter's array should contain names. If we don't limit the result
-  # to jobs from a limited number of queues or/and categories, the resulting
-  # array can get huge.
-  # If you omitting the parameters, `jobs` will return `[]`.
+  # Specify the categories where you want to look up the jobs.
+  # For the full list, see `SidekiqSearch::JOB_CATEGORIES`
+  from_categories: ['scheduled', 'dead']
 
   # Specify the queues where you want to look up the jobs.
   from_queues: ['default', 'your_custom_queue'],
-
-  # Specify the categories where you want to look up the jobs.
-  # For the full list, see SidekiqSearch::JOB_CATEGORIES
-  from_categories: ['scheduled', 'dead']
 )
 #=>
 # [
@@ -56,12 +51,12 @@ that_job[:job_object]
 ```
 
 ## Shortcomings
-There are two ways to retrieve jobs from Sidekiq, either to call `#to_a` on a category set (like `Sidekiq::ScheduledSet`, for example), or to use the [scan][5] method. The latter is a much more efficient way, both in terms of memory and performance, but unfortunately it is only available for the scheduled, retried and dead categories. If one needs to find out what jobs are currently executing or are in the enqueued state, getting an array of all the jobs in the category is the only way.
-Another difficulty with `scan` is that it is quite low-level (down to Redis and job JSON payload) and implementation-dependent. So using the "to_a"-way was the natural, and only, choice.
+There are two ways to retrieve jobs from Sidekiq, either to call `#to_a` on a category set (like `Sidekiq::ScheduledSet`, for example), or to use the [scan][5] method. The latter is much more efficient, both in terms of memory and performance, but unfortunately it is only available for the scheduled, retried and dead categories. If one needs to find out what jobs are currently executing or are in the enqueued state, getting an array of all the jobs in the category is the only way.
+Another difficulty with `scan` is that it is quite low-level (down to Redis and job JSON payload) and implementation-dependent. So using the "to_a-way" was the natural, and only, choice.
 
-The problem with this approach, however, is that we first need to have a copy of all job data (even that that will eventually be filtered out) in memory, and only after we have it, we can start searching for the job that we need. This is why the gem uses the opt-in approach and requires you to explicitly specify the queues and categories where you want the job to be searched: this helps to reduce the memory usage by not pulling the jobs that won't be relevant anyway.
+The problem with it, however, is that we first need to have a copy of all the job data (even that that will eventually be filtered out) in memory, and only after we have it, we can start searching/filtering/mapping/etc. This is why the gem uses the opt-in approach and requires you to explicitly specify the queues and categories where you want the job to be searched: this helps to reduce the memory usage by not getting into memory the jobs unnecessarily.
 
-Still, on a system with thousands of jobs, the gem might be a source of memory and performance issues, so make sure you understand the risks before you use this solution.
+Still, on a system with thousands of jobs, this might be a source of memory and performance issues, so make sure you understand all the risks.
 
 ## Development
 To develop and experiment you will most likely need some jobs. Development scripts expect them to be in the `jobs` folder, in the gem's root folder. It's added to `.gitignore` so that everyone could have their jobs as they like.
