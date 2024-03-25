@@ -166,15 +166,15 @@ class SidekiqSearch
 
   def check_parameters!
     if @from_categories.empty?
-      raise ArgumentError.new('`from_categories` parameter must contain at least one category name')
+      raise ArgumentError, '`from_categories` parameter must contain at least one category name'
     end
 
-    raise ArgumentError.new('`from_queues` parameter must contain at least one queue name') if @from_queues.empty?
+    raise ArgumentError, '`from_queues` parameter must contain at least one queue name' if @from_queues.empty?
 
     @from_categories.each do |category|
       next if JOB_CATEGORIES.include?(category)
 
-      raise ArgumentError.new("Unknown category `#{category}`. Must be one of: #{JOB_CATEGORIES.join(", ")}")
+      raise ArgumentError, "Unknown category `#{category}`. Must be one of: #{JOB_CATEGORIES.join(", ")}"
     end
 
     true
