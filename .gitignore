@@ -8,4 +8,6 @@
 .DS_Store
 
 # Folder to store jobs to experiment with in development
-/jobs/
+/jobs/*.rb
+
+/bin/sidekiq_config.yml

@@ -1,0 +1,12 @@
+# frozen_string_literal: true
+
+# DefaultJob
+class DefaultJob
+  include Sidekiq::Job
+
+  sidekiq_options queue: :default, retry: 0
+
+  def perform
+    sleep 100
+  end
+end
