@@ -34,18 +34,19 @@ jobs = SidekiqSearch.jobs(
 #   },
 #   …
 # ]
-# For the full list see the `serialize_*` methods in the source code.
+# For the full list of attributes see the `serialize_*` methods
+# in the source code.
 
-# Use what you like to filter, map, etc. the collection:
+# Finally, process the collection:
 that_job = jobs.find do |job|
   job[:class] == 'YourCustomJob' && job.dig(:arguments, 1) == 3
 end
 
 that_job[:job_object]
 #=> #<Sidekiq::…>
-# Will return either a Sidekiq::JobRecord (if the job is from enqueued
-# category) or Sidekiq::SortedEntry (if the job is from scheduled,
-# retried or dead categories), or Sidekiq::JobRecord (if the job is from
+# Will return either a `Sidekiq::JobRecord` (if the job is from enqueued
+# category) or `Sidekiq::SortedEntry` (if the job is from scheduled,
+# retried or dead categories), or `Sidekiq::JobRecord` (if the job is from
 # running category).
 # For the jobs from running category, the job hash will contain extra
 # fields; please refer to the source code for more details.
@@ -55,9 +56,9 @@ that_job[:job_object]
 There are two ways to retrieve jobs from Sidekiq, either to call `#to_a` on a category set (like `Sidekiq::ScheduledSet`, for example), or to use the [scan][5] method. The latter is much more efficient, both in terms of memory and performance, but unfortunately it is only available for the scheduled, retried and dead categories. If one needs to find out what jobs are currently executing or are in the enqueued state, getting an array of all the jobs in the category is the only way.
 Another difficulty with `scan` is that it is quite low-level (down to Redis and job JSON payload) and implementation-dependent. So using the "to_a-way" was the natural, and only, choice.
 
-The problem with it, however, is that we first need to have a copy of all the job data (even that that will eventually be filtered out) in memory, and only after we have it, we can start searching/filtering/mapping/etc. This is why the gem uses the opt-in approach and requires you to explicitly specify the queues and categories where you want the job to be searched: this helps to reduce the memory usage by not getting into memory the jobs unnecessarily.
+The problem with it is that we need to have a copy of _all_ the job data in memory first, and only then we can start searching/filtering/mapping/etc. This is why the gem uses the opt-in approach and requires you to explicitly specify the queues and categories where you want the job to be searched.
 
-Still, on a system with thousands of jobs, this might be a source of memory and performance issues, so make sure you understand all the risks.
+Still, on a large system even getting jobs for just one queue and one category may take too much memory, so make sure you understand the risks.
 
 ## Development
 To develop and experiment you will most likely need some jobs. Development scripts expect them to be in the `jobs` folder, in the gem's root folder. It's added to `.gitignore` so that everyone could have their jobs as they like.
