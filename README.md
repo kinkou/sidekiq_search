@@ -3,7 +3,7 @@
 This gem provides a uniform way to programmatically access Sidekiq jobs.
 
 Often, there is a need to retrieve a job from Sidekiq and do something with it. For example, in a Rails app to reschedule an already scheduled job. Sidekiq has an [API][1] for these things, but it's not that easy to use for the following reasons:
-- enqueued, scheduled/retried/dead and running jobs all have slightly different interfaces
+- enqueued, scheduled/retried/dead and running job sets (and job objects) have slightly different interfaces
 - the API can change from version to version
 - the API details are a bit hard to recall for most of us mere mortals
 
@@ -34,6 +34,7 @@ jobs = SidekiqSearch.jobs(
 #   },
 #   …
 # ]
+# For the full list see the `serialize_*` methods in the source code.
 
 # Use what you like to filter, map, etc. the collection:
 that_job = jobs.find do |job|
