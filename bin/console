@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+$DEBUG = true
+$VERBOSE = true
+
 require 'bundler/setup'
 
 require 'sidekiq_search'
