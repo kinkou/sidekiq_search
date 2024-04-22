@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class SidekiqSearch
+module SidekiqSearch
   VERSION = '0.0.0'
 end
