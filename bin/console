@@ -10,8 +10,10 @@ require 'sidekiq_search'
 
 Pathname.glob('spec/support/jobs/*.rb').each { require(_1.expand_path) }
 
+require_relative '../spec/support/util'
+
 def _flush_all
-  Sidekiq.redis(&:flushall)
+  SidekiqSearch::Util.flush_all
 end
 
 require 'irb'
