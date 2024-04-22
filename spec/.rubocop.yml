@@ -1,0 +1,13 @@
+inherit_from: ../.rubocop.yml
+
+Metrics/BlockLength:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Max: 30
+
+RSpec/NestedGroups:
+  Max: 10
+
+RSpec/ExampleLength:
+  Max: 25
