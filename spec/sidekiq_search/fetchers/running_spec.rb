@@ -4,10 +4,10 @@ require TEST_JOBS_ROOT.join('running_fetcher_job.rb')
 
 RSpec.describe SidekiqSearch::Fetchers::Running do
   let(:perform) { -> { described_class.new.call(from_queues:) } }
-  let(:sleep_for) { 15 }
+  let(:sleep_for) { 60 }
   let(:from_queues) { %w[default] }
   let(:result) do
-    value = 5.times.map do
+    value = 10.times.map do
       sleep(1)
       perform.call
     end
