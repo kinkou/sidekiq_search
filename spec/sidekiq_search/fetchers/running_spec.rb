@@ -3,10 +3,17 @@
 require TEST_JOBS_ROOT.join('running_fetcher_job.rb')
 
 RSpec.describe SidekiqSearch::Fetchers::Running do
-  let(:perform) { described_class.new.call(from_queues:) }
-  let(:sleep_for) { 20 }
+  let(:perform) { -> { described_class.new.call(from_queues:) } }
+  let(:sleep_for) { 15 }
   let(:from_queues) { %w[default] }
-  let(:result) { perform.first }
+  let(:result) do
+    value = 5.times.map do
+      sleep(1)
+      perform.call
+    end
+
+    value.flatten.first
+  end
   let(:sidekiq_job_id) { RunningFetcherJob.perform_async(sleep_for) }
 
   before(:all) { SidekiqSearch::Util.flush_all } # rubocop:disable RSpec/BeforeAfterAll
@@ -15,8 +22,6 @@ RSpec.describe SidekiqSearch::Fetchers::Running do
   before { sidekiq_job_id }
 
   it 'gets the running job', :aggregate_failures do
-    sleep(10)
-
     expect(result[:job_object]).to be_a(Sidekiq::JobRecord)
     expect(result[:class]).to eq('RunningFetcherJob')
     expect(result[:arguments]).to eq([sleep_for])
