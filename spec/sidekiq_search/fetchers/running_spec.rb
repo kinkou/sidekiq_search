@@ -4,7 +4,7 @@ require TEST_JOBS_ROOT.join('running_fetcher_job.rb')
 
 RSpec.describe SidekiqSearch::Fetchers::Running do
   let(:perform) { described_class.new.call(from_queues:) }
-  let(:sleep_for) { 10 }
+  let(:sleep_for) { 30 }
   let(:from_queues) { %w[default] }
   let(:result) { perform.first }
   let(:sidekiq_job_id) { RunningFetcherJob.perform_async(sleep_for) }
@@ -15,7 +15,7 @@ RSpec.describe SidekiqSearch::Fetchers::Running do
   before do
     sidekiq_job_id
 
-    sleep(5)
+    sleep(10)
   end
 
   it 'gets the running job', :aggregate_failures do
