@@ -13,3 +13,5 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 end
+
+TEST_JOBS_ROOT = Pathname.new(__dir__).join('support/jobs')

@@ -4,7 +4,8 @@
 require 'bundler/setup'
 
 require 'sidekiq_search'
-Pathname.glob('jobs/*.rb').each { require(_1.expand_path) }
+
+Pathname.glob('spec/support/jobs/*.rb').each { require(_1.expand_path) }
 
 def _flush_all
   Sidekiq.redis(&:flushall)
