@@ -4,8 +4,6 @@
 class RunningFetcherJob
   include Sidekiq::Job
 
-  sidekiq_options retry: 0
-
   def perform(sleep_for)
     sleep(sleep_for)
   end

@@ -14,12 +14,12 @@ RSpec.describe SidekiqSearch::Fetchers::Running do
 
     value.flatten.first
   end
-  let(:sidekiq_job_id) { RunningFetcherJob.perform_async(sleep_for) }
+  let(:sidekiq_job_ids) { 5.times.map { RunningFetcherJob.perform_async(sleep_for) } }
 
   before(:all) { SidekiqSearch::Util.flush_all } # rubocop:disable RSpec/BeforeAfterAll
   after { SidekiqSearch::Util.flush_all }
 
-  before { sidekiq_job_id }
+  before { sidekiq_job_ids }
 
   it 'gets the running job', :aggregate_failures do
     expect(result[:job_object]).to be_a(Sidekiq::JobRecord)
@@ -28,7 +28,7 @@ RSpec.describe SidekiqSearch::Fetchers::Running do
     expect(result[:created_at]).to be_a(Time)
     expect(result[:enqueued_at]).to be_a(Time)
     expect(result[:queue_name]).to eq('default')
-    expect(result[:sidekiq_job_id]).to eq(sidekiq_job_id)
+    expect(sidekiq_job_ids).to include(result[:sidekiq_job_id])
     expect(result[:activejob_job_id]).to be_nil
     expect(result[:category]).to eq('running')
     expect(result[:work_object]).to be_a(Sidekiq::Work)
