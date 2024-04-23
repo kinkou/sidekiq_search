@@ -36,6 +36,6 @@ jobs:
         env:
           REDIS_HOST: localhost
           REDIS_PORT: 6379
-        run: pwd && bundle exec sidekiq -c 2 -r ./spec/support/jobs/*.rb &
+        run: bundle exec sidekiq -c 1 -q default -r ./spec/support/jobs/require_jobs.rb &
       - name: Run the default task
         run: bundle exec rake

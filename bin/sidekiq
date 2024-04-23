@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-bundle exec sidekiq -C ./bin/sidekiq_config.yml -r ./bin/require_jobs.rb
+bundle exec sidekiq -C ./bin/sidekiq_config.yml -r ./spec/support/jobs/require_jobs.rb
